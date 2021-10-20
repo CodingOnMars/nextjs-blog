@@ -1,56 +1,37 @@
-import Link from 'next/link';
-import Head from 'next/head';
-import Layout from '../../components/layout';
+## Theory notes
 
-export default function FirstPost() {
-  return (
-    <Layout>
-      <Head>
-        <title>First Post</title>
-      </Head>
-      <h1>First post</h1>
-      <h2>
-        <Link href='/'>
-          <a>Back to home</a>
-        </Link>
-      </h2>
-    </Layout>
-  );
-}
+### SECTION: Navigate between pages
 
-// Theory notes
+#### NOTES:
 
-// SECTION: Navigate between pages
+1. To link pages in Next.js we wrap `<a></a>` tag to Link component like this:
 
-/* NOTES:
-1. To link pages in Next.js we wrap <a></a> tag to Link component like this:
-
+```
 <Link href='/path'>
   <a>Name of a link</a>
 </Link>
+```
 
 No routing libs are required. You create routes as files under pages and use Link component.
 
-Link component enables Client-side navigation. 
+Link component enables Client-side navigation.
 Page transition happens using JS, it faster than navigation by browser.
 
-<Link href="…" - browser does NOT full refresh
+`<Link href="…"` - browser does NOT full refresh
 
-<a href="…"> - browser does full refresh
+`<a href="…">` - browser does full refresh
 
-2. Next.js does code splitting automatically. 
+2. Next.js does code splitting automatically.
 
-Each page loads only what necessary for the page. 
+Each page loads only what necessary for the page.
 
 Pages are isolated. If one fails, others will work.
 
 In production build Next.js uses prefetch to load linked pages in the background (like Chrome does).
 
-*/
+### SECTION: Assets, metadata, CSS
 
-// SECTION: Assets, metadata, CSS
-
-/* NOTES:
+#### NOTES:
 
 1. Static assets go to public folder. This also includes robots.txt.
 
@@ -59,7 +40,7 @@ In production build Next.js uses prefetch to load linked pages in the background
 Next.js perks out of the box:
 
 - responsive images;
-- auto optimising images*;
+- auto optimising images\*;
 - lazy loading by default (hmmm, it's not necessary mean that it will be fast or save data)
 
 * - What is cool Next.js serves images in modern formats if a browser supports them;
@@ -67,12 +48,12 @@ Next.js perks out of the box:
 
 3. Metadata
 
-In Next.js built-in <Head></Head> component is used instead of <head></head>
+In Next.js built-in `<Head></Head>` component is used instead of `<head></head>`
 
-To customize html tag, for example, to add lang='', 
-we need to create a separate _document.js file under pages folder
+To customize html tag, for example, to add lang='',
+we need to create a separate \_document.js file under pages folder
 
-LINK: https://nextjs.org/docs/advanced-features/custom-document 
+LINK: https://nextjs.org/docs/advanced-features/custom-document
 
 4. CSS Styling
 
@@ -82,28 +63,26 @@ CSS Modules
 
 NOTE: to use CSS modules, CSS file name must end with .module.css
 
-If we use CSS modules, class names will be generated automatically. 
-So we don't have to worry about names collisions. 
+If we use CSS modules, class names will be generated automatically.
+So we don't have to worry about names collisions.
 
-Next.js code splitting works on CSS modules, loading only minimal CSS for each page. 
+Next.js code splitting works on CSS modules, loading only minimal CSS for each page.
 
 Next.js generate css files from modules and load them automatically in production.
 
 Global styles
 
-To load global CSS file, we need to create _app.js with App component under pages folder.
+To load global CSS file, we need to create \_app.js with App component under pages folder.
 
 App component is common across different pages.
 
-We need to restart dev server after adding _app.js.
+We need to restart dev server after adding \_app.js.
 
-NOTE: we can import global CSS files only inside pages/_app.js
+NOTE: we can import global CSS files only inside pages/\_app.js
 
-*/
+### SECTION: Pre-rendering and Data Fetching
 
-// SECTION: Pre-rendering and Data Fetching
-
-/* NOTES:
+#### NOTES:
 
 Pre-rendering
 
@@ -111,7 +90,7 @@ Pre-rendering
 
 Hydration is used. User can see page UI (static HTML) before JS loads and can start to interact with the page when it's fully loaded (when React components are initialized). For example, <Link/> component won't be active until JS loads.
 
-2. Next.js has two forms of pre-rendering: 
+2. Next.js has two forms of pre-rendering:
 
 - SG (Static generation): generates HTML at build time. Pre-rendered HTML is then reused on each request;
 
@@ -121,7 +100,7 @@ NOTE: in dev mode (npm run dev) every page is pre-rendered on each request, incl
 
 We can choose which pre-rendering form to use for each page.
 
-For most cases SG is OK (landings, blog posts, docs, e-commerce product listings). 
+For most cases SG is OK (landings, blog posts, docs, e-commerce product listings).
 
 If a page data changes on every request or it shows frequently updated data, SSR is a better option. Alternatively, we can skip pre-rendering and use client-side JS to fill frequently updated data.
 
@@ -132,6 +111,9 @@ Pages that don't fetch external data will be statically generated when the app i
 Next.js supports SG with data out of the box.
 
 4. SG with data using getStaticProps:
+
+```
+export default function Home(props) { ... }
 
 export async function getStaticProps() {
   // Get external data from the file system, API, DB, etc.
@@ -144,7 +126,9 @@ export async function getStaticProps() {
   }
 }
 
-- In dev mode getStaticProps runs on each request. In prod it runs at build time. 
+```
+
+- In dev mode getStaticProps runs on each request. In prod it runs at build time.
 
 - getStaticProps only runs in the server-side, it won't be included in JS bundle for the browser.
 
@@ -156,6 +140,7 @@ export async function getStaticProps() {
 
 5. For SSR we use getServerSideProps:
 
+```
 export async function getServerSideProps(context) {
   return {
     props: {
@@ -163,6 +148,8 @@ export async function getServerSideProps(context) {
     }
   }
 }
+
+```
 
 This way is slower than getStaticProps because server must compute result on every request
 
@@ -174,4 +161,10 @@ Private, user-specific pages where SEO is not relevant.
 
 LINK: https://swr.vercel.app/
 
-*/
+### SECTION: Dynamic routing
+
+#### NOTES:
+
+1. Pages that begin with `[ and end with ]` are dynamic routes in Next.js.
+
+![Dynamic routes](https://nextjs.org/static/images/learn/dynamic-routes/how-to-dynamic-routes.png)
