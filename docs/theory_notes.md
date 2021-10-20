@@ -168,3 +168,70 @@ LINK: https://swr.vercel.app/
 1. Pages that begin with `[ and end with ]` are dynamic routes in Next.js.
 
 ![Dynamic routes](https://nextjs.org/static/images/learn/dynamic-routes/how-to-dynamic-routes.png)
+
+- Like getStaticProps, getStaticPaths can fetch data from any data source.
+
+```
+export async function getAllPostIds() {
+  // Instead of the file system,
+  // fetch post data from an external API endpoint
+  const res = await fetch('..')
+  const posts = await res.json()
+  return posts.map(post => {
+    return {
+      params: {
+        id: post.id
+      }
+    }
+  })
+}
+
+```
+
+- In dev getStaticPaths runs on every request. In prod - at build time.
+
+- When we return fallback from getStatic paths:
+  - If fallback is false, any paths not returned by getStaticPaths will result in a 404 page;
+  - If fallback is true:
+    - paths that have not been generated at build time will not result in 404 page. Next.js will serve a fallback version of the page;
+
+LINK: [Fallback docs](https://nextjs.org/docs/basic-features/data-fetching#the-fallback-key-required)
+
+- Dynamic routes can be extended to catch all paths by adding three dots (...) inside the brackets.
+
+- We can import Next.js router hook useRouter from next/router
+
+- Custom 404 page - pages/404.js
+
+```
+export default function Custom404() {
+  return <h1>404 - Page Not Found</h1>
+}
+
+```
+
+### SECTION: API Routes
+
+#### NOTES:
+
+LINK: https://nextjs.org/docs/api-routes/introduction
+
+```
+// req = HTTP incoming message, res = HTTP server response
+export default function handler(req, res) {
+  // ...
+}
+
+```
+
+- req is an instance of [http.IncomingMessage](https://nodejs.org/api/http.html#http_class_http_incomingmessage), plus some pre-built [middlewares](https://nextjs.org/docs/api-routes/api-middlewares).
+
+- res is an instance of [http.ServerResponse](https://nodejs.org/api/http.html#http_class_http_serverresponse), plus some [helper functions](https://nextjs.org/docs/api-routes/response-helpers).
+
+[API Routes Tips](https://nextjs.org/learn/basics/api-routes/api-routes-details)
+
+Use cases for API Routes:
+
+- Saving incoming data to your database;
+- Securely communicating with a third-party API;
+- Previewing draft content from your CMS.
