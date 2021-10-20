@@ -56,7 +56,7 @@ In production build Next.js uses prefetch to load linked pages in the background
 
 2. Images.
 
-Next.js perks out of a box:
+Next.js perks out of the box:
 
 - responsive images;
 - auto optimising images*;
@@ -98,5 +98,80 @@ App component is common across different pages.
 We need to restart dev server after adding _app.js.
 
 NOTE: we can import global CSS files only inside pages/_app.js
+
+*/
+
+// SECTION: Pre-rendering and Data Fetching
+
+/* NOTES:
+
+Pre-rendering
+
+1. By default Next.js pre-renders every page, i.e. generates HTML for each page in advance.
+
+Hydration is used. User can see page UI (static HTML) before JS loads and can start to interact with the page when it's fully loaded (when React components are initialized). For example, <Link/> component won't be active until JS loads.
+
+2. Next.js has two forms of pre-rendering: 
+
+- SG (Static generation): generates HTML at build time. Pre-rendered HTML is then reused on each request;
+
+- SSR (server-side rendering): generates HTML on each request.
+
+NOTE: in dev mode (npm run dev) every page is pre-rendered on each request, including pages that use SG.
+
+We can choose which pre-rendering form to use for each page.
+
+For most cases SG is OK (landings, blog posts, docs, e-commerce product listings). 
+
+If a page data changes on every request or it shows frequently updated data, SSR is a better option. Alternatively, we can skip pre-rendering and use client-side JS to fill frequently updated data.
+
+3. SG can be used with and without Data.
+
+Pages that don't fetch external data will be statically generated when the app is built for prod.
+
+Next.js supports SG with data out of the box.
+
+4. SG with data using getStaticProps:
+
+export async function getStaticProps() {
+  // Get external data from the file system, API, DB, etc.
+  const data = ...
+
+  // The value of the `props` key will be
+  //  passed to the `Home` component
+  return {
+    props: ...
+  }
+}
+
+- In dev mode getStaticProps runs on each request. In prod it runs at build time. 
+
+- getStaticProps only runs in the server-side, it won't be included in JS bundle for the browser.
+
+- We don't need to import fetch(), Next.js polyfills it on both client and server.
+
+- We can query database directly.
+
+- getStaticProps can only be exported from a page. We can't export it from non-page files.
+
+5. For SSR we use getServerSideProps:
+
+export async function getServerSideProps(context) {
+  return {
+    props: {
+      // props for your component
+    }
+  }
+}
+
+This way is slower than getStaticProps because server must compute result on every request
+
+6. Client-side rendering
+
+Private, user-specific pages where SEO is not relevant.
+
+7. SWR hook for data fetching is recommended when fetching data on the client-side.
+
+LINK: https://swr.vercel.app/
 
 */
